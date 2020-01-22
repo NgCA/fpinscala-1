@@ -28,4 +28,15 @@ object Tree {
       case Branch(l, r) => maximum(l) max maximum(r)
     }
   }
+
+  /*
+  Exercise 3.27
+  Write a function depth that returns the maximum path length from the root of a tree to any leaf.
+   */
+  def maxDepth[A](tree: Tree[A]) : Int = {
+    tree match {
+      case Leaf(_) => 1
+      case Branch(l, r) => 1 + (maxDepth(l) max maxDepth(r))
+    }
+  }
 }
