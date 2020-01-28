@@ -4,15 +4,51 @@ package fpinscala.errorhandling
 import scala.{Option => _, Some => _, Either => _, _} // hide std library `Option`, `Some` and `Either`, since we are writing our own in this chapter
 
 sealed trait Option[+A] {
-  def map[B](f: A => B): Option[B] = ???
+  /*
+  Exercise 4.1 implement map, getOrElse, flatMap, orElse, and filter
+   */
+  //Apply f if Option is not None
+  def map[B](f: A => B): Option[B] = {
+    this match {
+      case None => None
+      case Some(v) => Some(f(v))
+    }
+  }
 
-  def getOrElse[B>:A](default: => B): B = ???
+  //return value of Option if Some else default
+  def getOrElse[B>:A](default: => B): B = {
+    this match {
+      case None => default
+      case Some(v) => v
+    }
+  }
 
-  def flatMap[B](f: A => Option[B]): Option[B] = ???
+  /*
+  Tried to implement without using pattern matching, but ultimate went to the answer key.
+  Took a while to understand solutions, but I've left comments to help.
+   */
 
-  def orElse[B>:A](ob: => Option[B]): Option[B] = ???
+  //Applies f just like map, but will flatten result so you don't get Some(Some(_))
+  def flatMap[B](f: A => Option[B]): Option[B] = {
+    //taken from answer key
+    map(f) getOrElse None
+    //read as map(f).getOrElse(None)
+  }
 
-  def filter(f: A => Boolean): Option[A] = ???
+  //returns the first Option if it’s defined; otherwise, it returns the second Option.
+  def orElse[B>:A](ob: => Option[B]): Option[B] = {
+    //taken from answer key
+    this map (Some(_)) getOrElse ob
+    //passes in Some(_) as function to map, which will return Some(Some(_)) or None
+    //this.map(Some(_)).getOrElse(ob)
+  }
+
+  //Convert Some to None if the value doesn’t satisfy f.
+  def filter(f: A => Boolean): Option[A] = {
+    //taken from answer key
+    flatMap(a => if (f(a)) Some(a) else None)
+    //applies predicate and returns Some or None depending on condition, flatMap makes sure we don't get nested Options
+  }
 }
 case class Some[+A](get: A) extends Option[A]
 case object None extends Option[Nothing]
