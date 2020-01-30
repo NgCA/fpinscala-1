@@ -43,7 +43,7 @@ sealed trait Option[+A] {
     //this.map(Some(_)).getOrElse(ob)
   }
 
-  //Convert Some to None if the value doesn’t satisfy f.
+  //Convert Some to None if the value doesn't satisfy f.
   def filter(f: A => Boolean): Option[A] = {
     //taken from answer key
     flatMap(a => if (f(a)) Some(a) else None)
@@ -74,7 +74,25 @@ object Option {
   def mean(xs: Seq[Double]): Option[Double] =
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
-  def variance(xs: Seq[Double]): Option[Double] = ???
+
+  /*
+  Exercise 4.2
+  Implement the variance function in terms of flatMap.
+  If the mean of a sequence is m, the variance is the mean of math.pow(x - m, 2)
+  for each element x in the sequence.
+   */
+  def variance(xs: Seq[Double]): Option[Double] = {
+    /*Correct implementation but their solution is more concise
+    val seqOpt: Option[Double] = mean(xs)
+    seqOpt.flatMap(m =>
+      Some(mean(xs.map(x => math.pow(x - m, 2))))
+    )
+    */
+
+    //solution from answer key
+    mean(xs) flatMap (m => mean(xs.map(x => math.pow(x - m, 2))))
+
+  }
 
   def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = ???
 
