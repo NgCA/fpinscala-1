@@ -94,7 +94,15 @@ object Option {
 
   }
 
-  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = ???
+  /*
+  Exercise 4.3
+  Write a generic function map2 that combines two Option values using a binary function.
+  If either Option value is None, then the return value is too.
+   */
+  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
+    //initially had a nested flatMap call because I forgot f returns type C not Option[C]
+    a.flatMap(x => b.map(y => f(x,y)))
+  }
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
 
