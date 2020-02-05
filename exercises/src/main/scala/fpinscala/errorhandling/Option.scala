@@ -1,7 +1,7 @@
 package fpinscala.errorhandling
 
 
-import scala.{Option => _, Some => _, Either => _, _} // hide std library `Option`, `Some` and `Either`, since we are writing our own in this chapter
+import scala.{Option => _, Some => _, Either => _} // hide std library `Option`, `Some` and `Either`, since we are writing our own in this chapter
 
 sealed trait Option[+A] {
   /*
@@ -104,7 +104,23 @@ object Option {
     a.flatMap(x => b.map(y => f(x,y)))
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
+  /*
+  Exercise 4.4
+  Write a function sequence that combines a list of Options into one Option containing
+  a list of all the Some values in the original list. If the original list contains None
+  even once, the result of the function should be None; otherwise the result should be
+  Some with a list of all the values.
+   */
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
+    a.foldLeft(Some(Nil): Option[List[A]])((acc, x) => map2(acc, x)((innerAcc, innerX) => innerAcc.::(innerX)))
+    //can also be done with foldRight, specs didn't say order had to be maintained
+    //also from solution you can see that the type annotation can be put after the function instead
+    //of after the base case which was how I was getting around Scala not being able to infer the type of empty lists
+    /*
+    solution from answer key
+    a.foldRight[Option[List[A]]](Some(Nil))((x,y) => map2(x,y)(_ :: _))
+     */
+  }
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
 }
