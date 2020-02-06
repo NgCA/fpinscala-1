@@ -122,5 +122,17 @@ object Option {
      */
   }
 
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
+  /*
+  Exercise 4.5
+  It’s straightforward to do using map and sequence, but try for a more efficient
+  implementation that only looks at the list once.
+  sequence(a map (f))
+  Implement traverse then implement sequence in terms of traverse
+   */
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+    a.foldLeft[Option[List[B]]](Some(Nil))((z, a) => map2(z, f(a))(_.::(_)))
+  }
+  def sequenceViaTraverse[A](a: List[Option[A]]): Option[List[A]] = {
+    traverse(a)(b => b)
+  }
 }
