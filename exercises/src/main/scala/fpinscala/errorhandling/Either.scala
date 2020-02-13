@@ -4,13 +4,37 @@ package fpinscala.errorhandling
 import scala.{Option => _, Either => _, Left => _, Right => _, _} // hide std library `Option` and `Either`, since we are writing our own in this chapter
 
 sealed trait Either[+E,+A] {
- def map[B](f: A => B): Either[E, B] = ???
+  /*
+  Exercise 4.6
+  Implement versions of map, flatMap, orElse, and map2 on Either that operate on the
+  Right value
+   */
+ def map[B](f: A => B): Either[E, B] = {
+   this match {
+     case Left(e) => Left(e)
+     case Right(b) => Right(f(b))
+   }
+ }
 
- def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = ???
+ def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = {
+   this match {
+     case Left(e) => Left(e)
+     case Right(b) => f(b)
+   }
+ }
 
- def orElse[EE >: E, B >: A](b: => Either[EE, B]): Either[EE, B] = ???
+ def orElse[EE >: E, B >: A](b: => Either[EE, B]): Either[EE, B] = {
+   this match {
+     case Left(_) => b
+     case Right(x) => Right(x)
+   }
+ }
 
- def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = ???
+ def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = {
+   flatMap(x => b.map(y => f(x,y)))
+   //solution used for-comprehension to replace explicit calls to flatMap and map
+   //for { a <- this; b1 <- b } yield f(a,b1)
+ }
 }
 case class Left[+E](get: E) extends Either[E,Nothing]
 case class Right[+A](get: A) extends Either[Nothing,A]
