@@ -51,13 +51,13 @@ object Either {
     traverse(es)(a => a)
   }
 
-  def mean(xs: IndexedSeq[Double]): Either[String, Double] = 
-    if (xs.isEmpty) 
+  def mean(xs: IndexedSeq[Double]): Either[String, Double] =
+    if (xs.isEmpty)
       Left("mean of empty list!")
-    else 
+    else
       Right(xs.sum / xs.length)
 
-  def safeDiv(x: Int, y: Int): Either[Exception, Int] = 
+  def safeDiv(x: Int, y: Int): Either[Exception, Int] =
     try Right(x / y)
     catch { case e: Exception => Left(e) }
 
@@ -66,3 +66,27 @@ object Either {
     catch { case e: Exception => Left(e) }
 
 }
+/*
+  Exercise 4.8
+  def mkPerson(name: String, age: Int): Either[String, Person] = mkName(name).map2(mkAge(age))(Person(_, _))
+
+  In this implementation, map2 is only able to report one error, even if both the name and
+  the age are invalid.
+
+  Solution:
+  1. What would you need to change in order to report both errors? Would
+  you change map2 or the signature of mkPerson?
+
+  Could possibly make map2 return Either[Seq[EE],C] instead to return a Sequence of errors, however
+  all the failures would need to return the same type.
+
+  2. Or could you create a new data type that
+  captures this requirement better than Either does, with some additional structure?
+
+  As far as a new data type goes, it might be possible to create a new data constructor (case class) where
+  it's apply takes in a Collection of E
+
+  3. How would orElse, traverse, and sequence behave differently for that data type?
+  They would need a way to accumulate the errors into the collection.  So they wouldn't short circuit upon
+  the first failure
+ */
