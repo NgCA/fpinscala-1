@@ -31,6 +31,24 @@ trait Stream[+A] {
   // writing your own function signatures.
 
   def startsWith[B](s: Stream[B]): Boolean = ???
+
+  /*
+  Exercise 5.1
+  Write a function to convert a Stream to a List, which will force its evaluation
+  and let you look at it in the REPL. You can convert to the regular List type in the
+  standard library. You can place this and other functions that operate on a Stream
+  inside the Stream trait.
+   */
+  def toList: List[A] = {
+    this match {
+      case Cons(h, t) => t().toList.::(h())
+      case Empty => Nil
+    }
+    /*toList solution from the answer key used a tail recursive inner function to avoid possible stack overflow
+    toListFast solution uses a mutable buffer to create the list using a tail recursive function
+     */
+
+  }
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
