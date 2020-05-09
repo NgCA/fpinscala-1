@@ -52,7 +52,10 @@ trait Stream[+A] {
     }
   }
 
-  def takeWhile(p: A => Boolean): Stream[A] = ???
+  //exercise 5.3
+  def takeWhile(p: A => Boolean): Stream[A] = {
+    this.foldRight(empty: Stream[A])((a,z) => if (p(a)) cons(a, z) else z)
+  }
 
   def forAll(p: A => Boolean): Boolean = ???
 
