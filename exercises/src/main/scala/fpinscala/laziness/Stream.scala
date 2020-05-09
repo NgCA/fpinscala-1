@@ -57,7 +57,13 @@ trait Stream[+A] {
     this.foldRight(empty: Stream[A])((a,z) => if (p(a)) cons(a, z) else z)
   }
 
-  def forAll(p: A => Boolean): Boolean = ???
+  /*exercise 5.4
+  Implement forAll, which checks that all elements in the Stream match a given predi- cate. Your implementation should
+  terminate the traversal as soon as it encounters a nonmatching value.
+   */
+  def forAll(p: A => Boolean): Boolean = {
+    this.foldRight(true)((a,z) => p(a) && z)
+  }
 
   def headOption: Option[A] = ???
 
