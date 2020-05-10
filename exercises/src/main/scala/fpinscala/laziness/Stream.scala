@@ -54,7 +54,7 @@ trait Stream[+A] {
 
   //exercise 5.3 and 5.5
   def takeWhile(p: A => Boolean): Stream[A] = {
-    this.foldRight(empty: Stream[A])((a,z) => if (p(a)) cons(a, z) else z)
+    this.foldRight(empty: Stream[A])((a, z) => if (p(a)) cons(a, z) else z)
   }
 
   /*exercise 5.4
@@ -62,10 +62,17 @@ trait Stream[+A] {
   terminate the traversal as soon as it encounters a nonmatching value.
    */
   def forAll(p: A => Boolean): Boolean = {
-    this.foldRight(true)((a,z) => p(a) && z)
+    this.foldRight(true)((a, z) => p(a) && z)
   }
 
-  def headOption: Option[A] = ???
+  /*
+  exercise 5.6
+  Hard: Implement headOption using foldRight.
+   */
+  def headOption: Option[A] = {
+    //without foldRight => Option(take(1))
+    foldRight(None: Option[A])((a, z) => Some(a))
+  }
 
   // 5.7 map, filter, append, flatmap using foldRight. Part of the exercise is
   // writing your own function signatures.
