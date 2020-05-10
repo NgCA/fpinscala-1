@@ -52,12 +52,12 @@ trait Stream[+A] {
     }
   }
 
-  //exercise 5.3 and 5.5
+  //Exercise 5.3 and 5.5
   def takeWhile(p: A => Boolean): Stream[A] = {
     this.foldRight(empty: Stream[A])((a, z) => if (p(a)) cons(a, z) else z)
   }
 
-  /*exercise 5.4
+  /*Exercise 5.4
   Implement forAll, which checks that all elements in the Stream match a given predi- cate. Your implementation should
   terminate the traversal as soon as it encounters a nonmatching value.
    */
@@ -66,7 +66,7 @@ trait Stream[+A] {
   }
 
   /*
-  exercise 5.6
+  Exercise 5.6
   Hard: Implement headOption using foldRight.
    */
   def headOption: Option[A] = {
@@ -96,6 +96,28 @@ trait Stream[+A] {
      */
 
   }
+
+  /*
+  Exercise 5.7
+  Implement map, filter, append, and flatMap using foldRight. The append method should be non-strict in its argument.
+   */
+
+  def map[B](f: A => B): Stream[B] = {
+    foldRight(empty[B])((a, z) => cons(f(a), z))
+  }
+
+  def filter(f: A => Boolean): Stream[A] = {
+    foldRight(empty[A])((a, z) => if (f(a)) cons(a, z) else z)
+  }
+
+  def append[B >: A](s: => Stream[B]): Stream[B] = {
+    foldRight(s)((a, z) => cons(a, z))
+  }
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] = {
+    foldRight(empty[B])((a, z) => f(a).append(z))
+  }
+
 }
 
 case object Empty extends Stream[Nothing]
