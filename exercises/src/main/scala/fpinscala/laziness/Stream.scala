@@ -139,6 +139,21 @@ object Stream {
 
   val ones: Stream[Int] = Stream.cons(1, ones)
 
+  /*
+  Exercise 5.8
+  Generalize ones slightly to the function constant, which returns an infinite Stream of a given value.
+   */
+  def constant[A](a: A): Stream[A] = {
+    /*
+    my initial solution
+    val infinite: Stream[A] = cons(a, constant(a))
+    infinite
+    */
+    //answer key's solution
+    lazy val infinite: Stream[A] = Cons(() => a, () => infinite)
+    infinite
+  }
+
   def from(n: Int): Stream[Int] = ???
 
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
