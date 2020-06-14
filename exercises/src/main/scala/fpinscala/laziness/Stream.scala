@@ -162,5 +162,16 @@ object Stream {
     cons(n, from(n + 1))
   }
 
+  /*
+  Exercise 5.10
+  Write a function fibs that generates the infinite stream of Fibonacci numbers: 0, 1, 1, 2, 3, 5, 8, and so on.
+   */
+  def fibs(): Stream[Int] = {
+    def innerFib(prev: Int = 0, current: Int = 1): Stream[Int] = {
+      cons(prev, innerFib(current, prev + current))
+    }
+    innerFib()
+  }
+
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
 }
