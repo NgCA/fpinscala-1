@@ -185,5 +185,11 @@ object Stream {
       case None => empty
       case Some((nextValue, nextState)) => cons(nextValue, unfold(nextState)(f))
     }
+    /*
+    solution from answer key's variable names help to understand it better
+    f(z) match {
+    case Some((h,s)) => cons(h, unfold(s)(f))
+    case None => empty
+     */
   }
 }
