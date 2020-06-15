@@ -170,6 +170,7 @@ object Stream {
     def innerFib(prev: Int = 0, current: Int = 1): Stream[Int] = {
       cons(prev, innerFib(current, prev + current))
     }
+
     innerFib()
   }
 
@@ -191,5 +192,25 @@ object Stream {
     case Some((h,s)) => cons(h, unfold(s)(f))
     case None => empty
      */
+  }
+
+  /*
+  Exercise 5.12
+  Write fibs, from, constant, and ones in terms of unfold.
+   */
+  def fibsViaUnfold(): Stream[Int] = {
+    unfold((0, 1)) { case (h, s) => Some(h, (s, h + s)) }
+  }
+
+  def fromViaUnfold(n: Int): Stream[Int] = {
+    unfold(n)(s => Some(s, s + 1))
+  }
+
+  def constantViaUnfold[A](a: A): Stream[A] = {
+    unfold(a)(_ => Some(a, a))
+  }
+
+  def onesViaUnfold(): Stream[Int] = {
+    unfold(1)(_ => Some(1, 1))
   }
 }
