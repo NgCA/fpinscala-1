@@ -43,4 +43,52 @@ class StreamTest extends org.scalatest.FunSuite {
     val expected = List(1, 1, 1, 1, 1)
     assert(actual == expected)
   }
+
+  test("5.13 mapViaUnfold") {
+    val a = Stream(0, 1, 2)
+    val actual = a.map(_ + 1).toList
+    val expected = List(1, 2, 3)
+    assert(actual == expected)
+  }
+
+  test("5.13 takeViaUnfold") {
+    val actualInfinite = Stream.ones.takeViaUnfold(3).toList
+    val expected = List(1, 1, 1)
+    assert(actualInfinite == expected)
+    val actual = Stream(1, 1, 1, 1).takeViaUnfold(3).toList
+    assert(actual == expected)
+  }
+
+  test("5.13 takeWhileViaUnfold") {
+    val actual = Stream.from(1).takeWhileViaUnfold(_ % 5 != 0).toList
+    val expected = List(1, 2, 3, 4)
+    assert(actual == expected)
+  }
+
+  test("5.13 zipWithViaUnfold") {
+    val first = Stream.from(1)
+    val second = Stream.constant("a")
+    val actual = first.zipWithViaUnfold(second)((f, s) => s"$s $f").take(3).toList
+    val expected = List("a 1", "a 2", "a 3")
+    assert(actual == expected)
+  }
+
+  test("5.13 zipAll") {
+    val firstInfinite = Stream.from(1)
+    val secondInfinite = Stream.constant("a")
+    val actual = firstInfinite.zipAll(secondInfinite).take(2).toList
+    val expected = List(
+      (Some(1), Some("a")),
+      (Some(2), Some("a"))
+    )
+    assert(actual == expected)
+    val first = Stream(1, 2)
+    val second = Stream("a")
+    val actualUneven = first.zipAll(second).toList
+    val expectedUneven = List(
+      (Some(1), Some("a")),
+      (Some(2), Option.empty[String])
+    )
+    assert(actualUneven == expectedUneven)
+  }
 }
