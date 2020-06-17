@@ -74,9 +74,6 @@ trait Stream[+A] {
     foldRight(None: Option[A])((a, z) => Some(a))
   }
 
-  // 5.7 map, filter, append, flatmap using foldRight. Part of the exercise is
-  // writing your own function signatures.
-
   def startsWith[B](s: Stream[B]): Boolean = ???
 
   /*
