@@ -74,7 +74,32 @@ trait Stream[+A] {
     foldRight(None: Option[A])((a, z) => Some(a))
   }
 
-  def startsWith[B](s: Stream[B]): Boolean = ???
+  /*
+  Exercise 5.14
+  Hard: Implement startsWith using functions you’ve written.
+  It should check if one Stream is a prefix of another.
+  For instance, Stream(1,2,3) startsWith Stream(1,2) would be true.
+   */
+  def startsWith[B](s: Stream[B]): Boolean = {
+    /*
+    I assumed wrongly that if s is empty it should return false, which was more
+    complicated than it needed to be. When checked against List it should return true
+    scala> List(1,2,3).startsWith(Nil)
+    res6: Boolean = true
+    val matched = this
+      .zipAll(s)
+      .takeWhile {
+        case (a1, a2) => a1 == a2
+      }
+    matched.toList match {
+      case Nil => false
+      case m => m == s.toList
+    }*/
+    //solution from answer key
+    zipAll(s).takeWhile(!_._2.isEmpty) forAll {
+      case (h, h2) => h == h2
+    }
+  }
 
   /*
   Exercise 5.1

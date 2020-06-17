@@ -91,4 +91,16 @@ class StreamTest extends org.scalatest.FunSuite {
     )
     assert(actualUneven == expectedUneven)
   }
+
+  test("5.14 startsWith true") {
+    val first = Stream(1, 2, 3)
+    val second = Stream(1, 2)
+    assert(first.startsWith(second))
+  }
+
+  test("5.14 starts should return false when first does not start with second") {
+    val first = Stream(1, 2, 3)
+    val second = Stream(1, 1)
+    assert(!first.startsWith(second))
+  }
 }
