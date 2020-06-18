@@ -103,4 +103,18 @@ class StreamTest extends org.scalatest.FunSuite {
     val second = Stream(1, 1)
     assert(!first.startsWith(second))
   }
+
+  test("5.15 tails") {
+    //scala> Stream(1,2,3) == Stream(1,2,3)
+    //res4: Boolean = false
+    //have to test this way since == does not look at elements of Stream
+    val actual = Stream(1, 2, 3).tails.map(_.toList).toList
+    val expected = List(
+      List(1, 2, 3),
+      List(2, 3),
+      List(3),
+      List()
+    )
+    assert(actual == expected)
+  }
 }
