@@ -211,6 +211,30 @@ trait Stream[+A] {
       case subStream => Some(subStream, subStream.drop(1))
     }.append(Stream(empty))
   }
+
+  /*
+  Hard: Generalize tails to the function scanRight, which is like a foldRight that returns
+  a stream of the intermediate results. For example:
+        scala> Stream(1,2,3).scanRight(0)(_ + _).toList
+        res0: List[Int] = List(6,5,3,0)
+This example should be equivalent to the expression List(1+2+3+0, 2+3+0, 3+0, 0). Your function
+should reuse intermediate results so that traversing a Stream with n elements always takes time linear
+in n.
+   */
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] = {
+    /*
+    initial pass is O(n^2) not O(n)
+    unfold(this){
+      case Empty => None
+      case subStream => Some((subStream.foldRight(acc)(f), subStream.drop(1)))
+    }.append(Stream(acc))*/
+    //solution from answer key with variables renamed for easier understanding
+    foldRight(z, Stream(z)) { (a, acc) =>
+      lazy val accThunk = acc
+      val result = f(a, accThunk._1)
+      (result, cons(result, accThunk._2))
+    }._2
+  }
 }
 
 case object Empty extends Stream[Nothing]

@@ -117,4 +117,10 @@ class StreamTest extends org.scalatest.FunSuite {
     )
     assert(actual == expected)
   }
+
+  test("5.16 scanRight") {
+    val actual = Stream(1, 2, 3).scanRight(0)(_ + _).toList
+    val expected = List(6,5,3,0)
+    assert(actual == expected)
+  }
 }
