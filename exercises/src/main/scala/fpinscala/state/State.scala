@@ -93,7 +93,22 @@ object RNG {
     ((firstRnd, secondRnd, thirdRnd), thirdRng)
   }
 
-  def ints(count: Int)(rng: RNG): (List[Int], RNG) = ???
+  /*
+  Exercise 6.4
+  Write a function to generate a list of random integers.
+   */
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    def innerInts(count: Int)(innerRng: RNG)(list: List[Int]): (List[Int], RNG) = {
+      if (count == 0) {
+        (list, innerRng)
+      } else {
+        val (i, r) = innerRng.nextInt
+        innerInts(count - 1)(r)(i :: list)
+      }
+    }
+
+    innerInts(count)(rng)(List.empty[Int])
+  }
 
   def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
 
