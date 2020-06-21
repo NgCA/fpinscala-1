@@ -49,7 +49,25 @@ object RNG {
      */
   }
 
-  def double(rng: RNG): (Double, RNG) = ???
+  /*
+  Exercise 6.2
+  Write a function to generate a Double between 0 and 1, not including 1. Note: You can use Int.MaxValue to obtain the
+  maximum positive integer value, and you can use x.toDouble to convert an x: Int to a Double.
+   */
+  def double(rng: RNG): (Double, RNG) = {
+    /*
+    val (random, nextRNg) = nonNegativeInt(rng)
+    def enforceUpperBound(r: Double): Double ={
+      if (r > 1) enforceUpperBound(r / 10) else r
+    }
+    val randomDouble = random.toDouble
+    val boundedRandomDouble = enforceUpperBound(randomDouble)
+    (boundedRandomDouble, nextRNg)
+    */
+    //solution from answer key has a much simpler and efficient way of enforcing the upper bound of 1 (non-inclusive)
+    val (i, r) = nonNegativeInt(rng)
+    (i / (Int.MaxValue.toDouble + 1), r)
+  }
 
   def intDouble(rng: RNG): ((Int, Double), RNG) = ???
 
