@@ -110,6 +110,15 @@ object RNG {
     innerInts(count)(rng)(List.empty[Int])
   }
 
+  /*
+  Exercise 6.5
+  Use map to reimplement double in a more elegant way. See exercise 6.2.
+   */
+  def doubleViaMap: Rand[Double] = {
+    map(nonNegativeInt)(i => i / (Int.MaxValue.toDouble + 1))
+    //can also use _ instead of i => i
+  }
+
   def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
