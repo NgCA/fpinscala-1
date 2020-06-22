@@ -128,11 +128,31 @@ object RNG {
     rng => {
       val (a, rng1) = ra(rng)
       val (b, rng2) = rb(rng1)
-      (f(a,b), rng2)
+      (f(a, b), rng2)
     }
   }
 
-  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
+  /*
+  Exercise 6.7
+  Hard: If you can combine two RNG transitions, you should be able to combine a whole list of them. Implement sequence
+  for combining a List of transitions into a single transition. Use it to reimplement the ints function you wrote
+  before. For the latter, you can use the standard library function List.fill(n)(x) to make a list with x repeated n
+  times.
+   */
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = {
+    //used foldLeft initially, but realized it would apply each Rand in the wrong order
+    rng =>
+      fs.foldRight((List.empty[A], rng)) { (rand, acc) =>
+        val (a, nextRng) = rand(acc._2)
+        (a :: acc._1, nextRng)
+      }
+    //see 07.answer.scala for more details
+    //fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
+  }
+
+  def intsViaSequence(count: Int): Rand[List[Int]] = {
+    sequence(List.fill(count)(int))
+  }
 
   def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = ???
 }
