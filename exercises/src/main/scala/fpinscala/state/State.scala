@@ -201,14 +201,39 @@ object RNG {
 }
 
 case class State[S, +A](run: S => (A, S)) {
+  /*
+  Exercise 6.10
+  Generalize the functions unit, map, map2, flatMap, and sequence.
+  Add them as methods on the State case class where possible. Otherwise you should put them in a State companion object.
+   */
+  //solutions from answer key implement map and map2 using flatmap
   def map[B](f: A => B): State[S, B] =
-    ???
+    State {
+      state =>
+        val (a, s) = run(state)
+        (f(a), s)
+    }
 
   def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
-    ???
+    State {
+      state =>
+        val (a, s1) = run(state)
+        val (b, s2) = sb.run(s1)
+        (f(a, b), s2)
+    }
 
   def flatMap[B](f: A => State[S, B]): State[S, B] =
-    ???
+    State {
+      state =>
+        val (a, s1) = run(state)
+        val fState = f(a)
+        /*
+        can just return fState.run(s1)
+        val (b, s2) = fState.run(s1)
+        (b, s2)*/
+        fState.run(s1)
+    }
+
 }
 
 sealed trait Input
@@ -221,6 +246,26 @@ case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object State {
   type Rand[A] = State[RNG, A]
+
+  def unit[S, A](a: A): State[S, A] = State(s => (a, s))
+
+  def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] =
+    fs.foldRight(unit[S, List[A]](List()))((f, acc) => f.map2(acc)(_ :: _))
+    /*
+    Didn't move unit to object initially
+      State {
+      state =>
+        def init: State[S, List[A]] = State[S, List[A]](s => (List[A](), s))
+
+        val generate = fs.foldRight(init) { (f, acc) =>
+          acc.flatMap { listA =>
+            State { s =>
+              val (a, next) = f.run(s)
+              (listA :+ a, next) }
+          }
+        }
+        generate.run(state)
+    }*/
 
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
 }
