@@ -25,4 +25,10 @@ class GettingStartedTest extends org.scalatest.FunSuite {
     val curriedFunc = PolymorphicFunctions.curry(func)
     assert(func(1, 1) == curriedFunc(1)(1))
   }
+
+  test("Exercise 2.4 uncurry") {
+    def curried = (a: Int) => (b: Int) => a + b
+    val uncurried = PolymorphicFunctions.uncurry(curried)
+    assert(curried(1)(1) == uncurried(1,1))
+  }
 }
