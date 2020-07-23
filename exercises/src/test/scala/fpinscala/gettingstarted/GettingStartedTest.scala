@@ -28,7 +28,17 @@ class GettingStartedTest extends org.scalatest.FunSuite {
 
   test("Exercise 2.4 uncurry") {
     def curried = (a: Int) => (b: Int) => a + b
+
     val uncurried = PolymorphicFunctions.uncurry(curried)
-    assert(curried(1)(1) == uncurried(1,1))
+    assert(curried(1)(1) == uncurried(1, 1))
+  }
+
+  test("exercise 2.5 compose") {
+    def f = (a: Int) => s"abc $a"
+
+    def g = (a: Int) => a + 1
+
+    val fComposeG = PolymorphicFunctions.compose(f, g)
+    assert(fComposeG(1) == "abc 2")
   }
 }
