@@ -31,7 +31,8 @@ object MyModule {
     var acc = 1
     var i = n
     while (i > 0) {
-      acc *= i; i -= 1
+      acc *= i;
+      i -= 1
     }
     acc
   }
@@ -44,6 +45,7 @@ object MyModule {
         return prev
       inner(next, prev + next, counter - 1)
     }
+
     inner(0, 1, n)
   }
 
@@ -100,7 +102,8 @@ object AnonymousFunctions {
     println(formatResult("increment3", 7, x => x + 1))
     println(formatResult("increment4", 7, _ + 1))
     println(formatResult("increment5", 7, x => {
-      val r = x + 1; r
+      val r = x + 1;
+      r
     }))
   }
 }
@@ -154,7 +157,23 @@ object PolymorphicFunctions {
 
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
-  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = ???
+  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = {
+    //solution in answer key is simpler due to checking index and index + 1, made it more difficult than necessary
+    //was still thinking about fibonacci, which explains thinking about accessing prev element
+    def loop(n: Int): Boolean = {
+      if (n >= as.length)
+        true
+      else if (gt(as(n - 1), as(n)))
+        loop(n + 1)
+      else
+        false
+    }
+
+    if (as.length <= 1)
+      true
+    else
+      loop(1)
+  }
 
   // Polymorphic functions are often so constrained by their type
   // that they only have one implementation! Here's an example:
