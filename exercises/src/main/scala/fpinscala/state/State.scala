@@ -251,21 +251,57 @@ object State {
 
   def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] =
     fs.foldRight(unit[S, List[A]](List()))((f, acc) => f.map2(acc)(_ :: _))
-    /*
-    Didn't move unit to object initially
-      State {
-      state =>
-        def init: State[S, List[A]] = State[S, List[A]](s => (List[A](), s))
 
-        val generate = fs.foldRight(init) { (f, acc) =>
-          acc.flatMap { listA =>
-            State { s =>
-              val (a, next) = f.run(s)
-              (listA :+ a, next) }
-          }
+  /*
+  Didn't move unit to object initially
+    State {
+    state =>
+      def init: State[S, List[A]] = State[S, List[A]](s => (List[A](), s))
+
+      val generate = fs.foldRight(init) { (f, acc) =>
+        acc.flatMap { listA =>
+          State { s =>
+            val (a, next) = f.run(s)
+            (listA :+ a, next) }
         }
-        generate.run(state)
-    }*/
+      }
+      generate.run(state)
+  }*/
 
-  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
+  /*
+  Exercise 6.11
+  The rules of the machine are as follows:
+  􏰀 Inserting a coin into a locked machine will cause it to unlock if there’s any candy left.
+􏰀   Turning the knob on an unlocked machine will cause it to dispense candy and become locked.
+􏰀   Turning the knob on a locked machine or inserting a coin into an unlocked machine does nothing.
+􏰀   A machine that’s out of candy ignores all inputs.
+   */
+  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = {
+    State[Machine, (Int, Int)] {
+      machine =>
+        if (machine.candies == 0)
+          ((machine.coins, machine.candies), machine)
+        else {
+          val finalMachine = inputs.foldLeft(machine) {
+            case (nextMachine, Coin) => insertCoin(nextMachine)
+            case (nextMachine, Turn) => turnKnob(nextMachine)
+          }
+          ((finalMachine.coins, finalMachine.candies), finalMachine)
+        }
+    }
+  }
+
+  def insertCoin(machine: Machine): Machine = {
+    if (machine.locked && machine.candies > 0)
+      machine.copy(locked = false, coins = machine.coins + 1)
+    else
+      machine
+  }
+
+  def turnKnob(machine: Machine): Machine = {
+    if (!machine.locked && machine.candies > 0)
+      machine.copy(locked = true, candies = machine.candies - 1)
+    else
+      machine
+  }
 }

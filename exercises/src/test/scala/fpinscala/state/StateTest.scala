@@ -34,7 +34,7 @@ class StateTest extends org.scalatest.FunSuite with BeforeAndAfter {
   }
 
   test("6.10 flatMap") {
-    val flatMap = state.flatMap(i => State.unit[RNG,String](s"flatMapped $i"))
+    val flatMap = state.flatMap(i => State.unit[RNG, String](s"flatMapped $i"))
 
     val actual = flatMap.run(simple)
     val expected = (s"flatMapped $nextRand", nextRng)
@@ -49,6 +49,53 @@ class StateTest extends org.scalatest.FunSuite with BeforeAndAfter {
     val actual = seq.run(simple)
     val expected = (List(nextRand), nextRng)
     assert(actual == expected)
+  }
+
+  test("6.11 insertCoin - Inserting a coin into a locked machine will cause it to unlock if there's" +
+    " any candy left") {
+    val machine = Machine(true, 1, 1)
+
+    val actual = State.insertCoin(machine)
+    val expected = Machine(false, 1, 2)
+
+    assert(actual == expected)
+  }
+
+  test("6.11 insertCoin - If the machine is unlocked then the state of the machine is returned") {
+    val machine = Machine(false, 1, 1)
+
+    val actual = State.insertCoin(machine)
+    assert(actual == machine)
+  }
+
+  test("6.11 insertCoin - If the machine locked and is out of candies then the state of the machine is returned") {
+    val machine = Machine(true, 0, 1)
+
+    val actual = State.insertCoin(machine)
+    assert(actual == machine)
+  }
+
+  test("6.11 turnKnob - Turning the knob on an unlocked machine will cause it to dispense candy and become locked.") {
+    val machine = Machine(false, 1, 1)
+
+    val actual = State.turnKnob(machine)
+    val expected = Machine(true, 0, 1)
+
+    assert(actual == expected)
+  }
+
+  test("6.11 turnKnob - If the machine is locked then the state of machine is returned") {
+    val machine = Machine(true, 1, 1)
+
+    val actual = State.turnKnob(machine)
+    assert(actual == machine)
+  }
+
+  test("6.11 turnKnob - if the machine is unlocked, but out of candies then the state of machine is returned") {
+    val machine = Machine(false, 0, 1)
+
+    val actual = State.turnKnob(machine)
+    assert(actual == machine)
   }
 
 }
