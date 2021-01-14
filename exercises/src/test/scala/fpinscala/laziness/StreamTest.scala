@@ -1,6 +1,8 @@
 package fpinscala.laziness
 
-class StreamTest extends org.scalatest.FunSuite {
+import org.scalatest.funsuite.AnyFunSuite
+
+class StreamTest extends AnyFunSuite {
 
   test("5.10 fibonnaci") {
     val fib = Stream.fibs()

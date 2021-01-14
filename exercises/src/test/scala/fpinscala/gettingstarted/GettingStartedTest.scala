@@ -1,6 +1,8 @@
 package fpinscala.gettingstarted
 
-class GettingStartedTest extends org.scalatest.FunSuite {
+import org.scalatest.funsuite.AnyFunSuite
+
+class GettingStartedTest extends AnyFunSuite {
 
   test("Exercise 2.1 fibonacci") {
     //example fibonacci sequence 0,1,1,2,3,5,8

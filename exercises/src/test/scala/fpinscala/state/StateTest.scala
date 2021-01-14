@@ -1,9 +1,10 @@
 package fpinscala.state
 
-import fpinscala.state.RNG.{Rand, Simple}
+import fpinscala.state.RNG.Simple
 import org.scalatest.BeforeAndAfter
+import org.scalatest.funsuite.AnyFunSuite
 
-class StateTest extends org.scalatest.FunSuite with BeforeAndAfter {
+class StateTest extends AnyFunSuite with BeforeAndAfter {
 
   val simple: Simple = Simple(1)
   val state = State[RNG, Int](rng => rng.nextInt)
