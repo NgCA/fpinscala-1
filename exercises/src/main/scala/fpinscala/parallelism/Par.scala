@@ -16,27 +16,27 @@ object Par {
 
     def get: A = getThunk()
 
-    //part of Exercise 7.3
-    def get(timeout: Long, units: TimeUnit) = {
+    def get(timeout: Long, units: TimeUnit): A = getWithTimeRemaining(timeout, units)._1
+
+    /**
+      * part of Exercise 7.3
+      *
+      * @param timeout
+      * @param units
+      * @return result with remaining time of timeout
+      */
+    def getWithTimeRemaining(timeout: Long, units: TimeUnit): (A, Long) = {
       //originally used millis, but didn't realize System.nanoTime existed
-      val timeoutNanos = units.toNanos(timeout)
+      val nanoTimeout = units.toNanos(timeout)
       val start = System.nanoTime()
       val result = get()
       val end = System.nanoTime()
-      val timeTaken = end - start
+      val duration = end - start
 
-      if (timeTaken > timeoutNanos)
+      if (duration > nanoTimeout)
         throw new TimeoutException()
       else
-        result
-    }
-
-    //part of Exercise 7.3
-    def getWithDuration: (A, Long) = {
-      val start = System.nanoTime()
-      val result = get()
-      val end = System.nanoTime()
-      (result, end - start)
+        (result, nanoTimeout - duration)
     }
 
     def isCancelled = false
@@ -67,17 +67,12 @@ object Par {
   //exercise 7.3 to verify timeout is respected
   def map2WithTimeout[A, B, C](a: Par[A], b: Par[B], timeout: Long, units: TimeUnit)(f: (A, B) => C): Par[C] =
     (es: ExecutorService) => {
-      val timeoutNanos = units.toNanos(timeout)
       val af = UnitFuture(a(es).get)
       val bf = UnitFuture(b(es).get)
 
-      val (afResult, afDuration) = af.getWithDuration
-      val (bfResult, bfDuration) = bf.getWithDuration
-
-      if (timeoutNanos - afDuration - bfDuration < 0)
-        throw new TimeoutException()
-      else
-        UnitFuture(() => f(afResult, bfResult))
+      val (afResult, timeRemaining) = af.getWithTimeRemaining(timeout, units)
+      val bfResult = bf.get(timeRemaining, TimeUnit.NANOSECONDS)
+      UnitFuture(() => f(afResult, bfResult))
     }
 
   def fork[A](a: => Par[A]): Par[A] = // This is the simplest and most natural implementation of `fork`, but there are some problems with it--for one, the outer `Callable` will block waiting for the "inner" task to complete. Since this blocking occupies a thread in our thread pool, or whatever resource backs the `ExecutorService`, this implies that we're losing out on some potential parallelism. Essentially, we're using two threads when one should suffice. This is a symptom of a more serious problem with the implementation, and we will discuss this later in the chapter.
