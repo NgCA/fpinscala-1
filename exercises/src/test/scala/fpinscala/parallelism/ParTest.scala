@@ -36,4 +36,12 @@ class ParTest extends AnyFunSuite {
     assert(actual(es).get == expected)
   }
 
+  //here to show why I had to call get for sequence test's assert
+  test("equality of functions") {
+    //equality of functions does not check equality of implementation
+    val a = () => 1
+    val b = () => 1
+    assert(a != b)
+  }
+
 }
